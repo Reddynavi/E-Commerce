@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple E-Commerce</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .product-card, .cart, .checkout {
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      width: 300px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    td, th {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>🛍️ Simple E-Commerce</h1>
+
+  <div class="product-card">
+    <h2>Wireless Mouse</h2>
+    <p>💰 799 ₹</p>
+    <p>Ergonomic mouse with 2.4GHz connection</p>
+    <p>Stock: 25</p>
+    <button onclick="addToCart()">Add to Cart</button>
+  </div>
+
+  <div class="cart hidden" id="cart">
+    <h2>Your Cart</h2>
+    <table id="cartTable">
+      <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Qty</th>
+        <th>Total</th>
+        <th>Action</th>
+      </tr>
+    </table>
+    <p><strong>Total:</strong> <span id="cartTotal">0</span> ₹</p>
+    <button onclick="checkout()">Proceed to Checkout</button>
+  </div>
+
+  <div class="checkout hidden" id="checkout">
+    <h2>Checkout</h2>
+    <p>Select Payment Option:</p>
+    <label><input type="radio" name="payment" value="cod"> Cash on Delivery</label><br>
+    <label><input type="radio" name="payment" value="card"> Debit/Credit Card</label><br>
+    <label><input type="radio" name="payment" value="upi"> UPI / Google Pay</label><br><br>
+    <textarea placeholder="Enter delivery address" style="width:100%;height:70px;"></textarea><br><br>
+    <button onclick="confirmOrder()">Confirm Order</button>
+  </div>
+
+  <div class="checkout hidden" id="confirmation">
+    <h2>✅ Order Confirmed!</h2>
+    <p>Thank you for your purchase. Your order will be delivered soon 🚚</p>
+  </div>
+
+  <script>
+    let cart = [];
+    const product = { name: "Wireless Mouse", price: 799, qty: 1 };
+
+    function addToCart() {
+      document.getElementById("cart").classList.remove("hidden");
+      const existing = cart.find(item => item.name === product.name);
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({...product});
+      }
+      renderCart();
+    }
+
+    function renderCart() {
+      const table = document.getElementById("cartTable");
+      table.innerHTML = `
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Qty</th>
+          <th>Total</th>
+          <th>Action</th>
+        </tr>`;
+      let total = 0;
+      cart.forEach((item, i) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>${item.price}</td>
+          <td>${item.qty}</td>
+          <td>${item.price * item.qty}</td>
+          <td><button onclick="deleteItem(${i})">🗑️ Delete</button></td>
+        `;
+        total += item.price * item.qty;
+        table.appendChild(row);
+      });
+      document.getElementById("cartTotal").innerText = total;
+    }
+
+    function deleteItem(index) {
+      cart.splice(index, 1);
+      renderCart();
+      if (cart.length === 0) document.getElementById("cart").classList.add("hidden");
+    }
+
+    function checkout() {
+      document.getElementById("checkout").classList.remove("hidden");
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function confirmOrder() {
+      document.getElementById("cart").classList.add("hidden");
+      document.getElementById("checkout").classList.add("hidden");
+      document.getElementById("confirmation").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>
